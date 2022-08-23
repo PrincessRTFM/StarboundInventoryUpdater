@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -21,6 +22,8 @@ internal class Core {
 		EX_INTERNAL = 127,
 		EX_EXTERNAL = 128;
 	public const int SLOT_COUNT = 120;
+
+	public static readonly string INF = uint.MaxValue.ToString(); // because the starbound devs' json generator outputs INVALID json containing "inf" values
 
 	internal static readonly string[] bagNames = new string[] {
 		// vanilla
@@ -88,7 +91,7 @@ internal class Core {
 					abort($"! {jsonFile}", EX_UNEXPECTEDFILE);
 				}
 
-				string json = File.ReadAllText(jsonFile);
+				string json = jsonFix(File.ReadAllText(jsonFile), "inf", INF);
 				JsonNode root = JsonNode.Parse(json, null, new() {
 					AllowTrailingCommas = true,
 					CommentHandling = JsonCommentHandling.Skip,
@@ -128,20 +131,56 @@ internal class Core {
 				}
 			}
 			catch (Exception e) {
-				abort($"{e.GetType().Name}: {e.Message}", EX_INTERNAL);
+				abort(e.ToString(), EX_INTERNAL);
 			}
+#if !DEBUG
 			finally {
 				log($": {tempFile}");
 				File.Delete(tempFile);
 				log($": {jsonFile}");
 				File.Delete(jsonFile);
 			}
+#endif
 			timer.Stop();
 			log($"+ {timer.ElapsedMilliseconds}ms");
 			log("");
 		}
 
 		abort("Player files updated.");
+	}
+
+	internal static string jsonFix(in string src, in string find, in string replace) {
+		bool quoted = false;
+		int findLength = find.Length;
+		StringBuilder json = new();
+
+		log($"| {src.Length},{findLength}:{find},{replace.Length}:{replace}");
+
+		for (int i = 0; i < src.Length; ++i) {
+			if (src[i] == '\\') {
+				++i;
+				json.Append(src[i]);
+			}
+			else if (src[i] == '"') {
+				quoted = !quoted;
+				json.Append(src[i]);
+			}
+			else if (!quoted && i + findLength < src.Length && src.Substring(i, findLength) == find) {
+				json.Append(replace);
+				i += findLength - 1;
+			}
+			else {
+				json.Append(src[i]);
+			}
+		}
+
+#if DEBUG
+		string dbg = Path.GetTempFileName();
+		File.WriteAllText(dbg, json.ToString());
+		log($"& {dbg}");
+#endif
+
+		return json.ToString();
 	}
 
 	internal static int run(string path, params string[] args) {
