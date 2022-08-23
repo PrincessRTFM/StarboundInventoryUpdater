@@ -157,9 +157,9 @@ internal class Core {
 		log($"| {src.Length},{findLength}:{find},{replace.Length}:{replace}");
 
 		for (int i = 0; i < src.Length; ++i) {
-			if (src[i] == '\\') {
-				++i;
+			if (quoted && src[i] == '\\') {
 				json.Append(src[i]);
+				json.Append(src[++i]);
 			}
 			else if (src[i] == '"') {
 				quoted = !quoted;
