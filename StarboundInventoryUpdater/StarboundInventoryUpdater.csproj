@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Product>StarboundInventoryUpdater</Product>
+		<Authors>VariableVixen</Authors>
+		<Version>1.0.0</Version>
+		<Description>Updates an existing starbound player file for use with bk3k's extended inventory (120 slot version)</Description>
+		<PackageProjectUrl>https://github.com/PrincessRTFM/StarboundInventoryUpdater</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/PrincessRTFM/StarboundInventoryUpdater.git</RepositoryUrl>
+		<Copyright>Copyleft Vixen 2022</Copyright>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<Platforms>x64</Platforms>
+		<PlatformTarget>x64</PlatformTarget>
+		<PackageId>$(Product)</PackageId>
+		<AssemblyName>$(Product)</AssemblyName>
+		<TargetFramework>net6-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<NullableContextOptions>enable</NullableContextOptions>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<LangVersion>10</LangVersion>
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<RootNamespace>$(PackageId)</RootNamespace>
+		<Deterministic>false</Deterministic>
+		<AssemblyVersion>$(Version).*</AssemblyVersion>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<StartupObject>StarboundInventoryUpdater.Core</StartupObject>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<SourceRevisionId>debug</SourceRevisionId>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>embedded</DebugType>
+		<Optimize>false</Optimize>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<DebugType>portable</DebugType>
+		<Optimize>true</Optimize>
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
+
+</Project>
