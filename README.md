@@ -12,3 +12,9 @@ All you have to do is download the [latest release](https://github.com/PrincessR
 
 If you want to keep any of them vanilla, back them up first!
 
+## Requirements
+
+- dotnet 6 runtime
+
+If you run the program and no window pops up at all, it's either your antivirus (which should be popping up its own window about blocking an unknown app) or you're missing this.
+
