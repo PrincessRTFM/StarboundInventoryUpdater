@@ -1,6 +1,7 @@
 namespace StarboundInventoryUpdater;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,8 @@ internal class Core {
 	};
 	internal static readonly int bagNameLength = bagNames.Select(s => s.Length).Max();
 
+	internal static readonly List<string> tempfiles = new();
+
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "entry point")]
 	public static void Main(string[] args) {
 		string hkcu = Registry.CurrentUser.Name;
@@ -77,8 +80,8 @@ internal class Core {
 		foreach (string rawFile in playerFiles) {
 			timer.Restart();
 			string id = Path.GetFileNameWithoutExtension(rawFile);
-			string jsonFile = Path.GetTempFileName();
-			string tempFile = Path.GetTempFileName();
+			string jsonFile = mktemp();
+			string tempFile = mktemp();
 			log($"< {id}");
 			try {
 
@@ -133,20 +136,19 @@ internal class Core {
 			catch (Exception e) {
 				abort(e.ToString(), EX_INTERNAL);
 			}
-#if !DEBUG
-			finally {
-				log($": {tempFile}");
-				File.Delete(tempFile);
-				log($": {jsonFile}");
-				File.Delete(jsonFile);
-			}
-#endif
 			timer.Stop();
 			log($"+ {timer.ElapsedMilliseconds}ms");
 			log("");
 		}
 
 		abort("Player files updated.");
+	}
+
+	internal static string mktemp() {
+		string path = Path.GetTempFileName();
+		log($"& {path}");
+		tempfiles.Add(path);
+		return path;
 	}
 
 	internal static string jsonFix(in string src, in string find, in string replace) {
@@ -175,21 +177,19 @@ internal class Core {
 		}
 
 #if DEBUG
-		string dbg = Path.GetTempFileName();
+		string dbg = mktemp();
 		File.WriteAllText(dbg, json.ToString());
-		log($"& {dbg}");
 #endif
-
 		return json.ToString();
 	}
 
 	internal static int run(string path, params string[] args) {
-		log($"^ \"{path}\"");
+		log($"$ \"{path}\"");
 		foreach (string arg in args)
 			log($"  \"{arg}\"");
 		using Process child = Process.Start(path, args);
 		child.WaitForExit();
-		log($"$ {(child.ExitTime - child.StartTime).TotalMilliseconds}ms (as {child.ExitCode})");
+		log($"^ {child.ExitCode}/{Math.Round((child.ExitTime - child.StartTime).TotalMilliseconds)}");
 		return child.ExitCode;
 	}
 
@@ -208,7 +208,16 @@ internal class Core {
 	internal static void log(string message)
 		=> Console.WriteLine(message);
 
+	internal static void cleanup() {
+		foreach (string path in tempfiles) {
+			log($": {path}");
+			File.Delete(path);
+		}
+		tempfiles.Clear();
+	}
+
 	internal static void abort(string message, int code = 0) {
+		cleanup();
 		log("");
 		log(message);
 		log("");
