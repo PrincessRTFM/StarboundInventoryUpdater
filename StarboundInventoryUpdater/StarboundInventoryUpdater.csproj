@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<Product>StarboundInventoryUpdater</Product>
 		<Authors>VariableVixen</Authors>
-		<Version>1.0.0</Version>
+		<Version>1.0.3</Version>
 		<Description>Updates an existing starbound player file for use with bk3k's extended inventory (120 slot version)</Description>
 		<PackageProjectUrl>https://github.com/PrincessRTFM/StarboundInventoryUpdater</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/PrincessRTFM/StarboundInventoryUpdater.git</RepositoryUrl>
