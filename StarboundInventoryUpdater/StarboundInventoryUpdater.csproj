@@ -6,8 +6,9 @@
 		<Version>1.0.3</Version>
 		<Description>Updates an existing starbound player file for use with bk3k's extended inventory (120 slot version)</Description>
 		<PackageProjectUrl>https://github.com/PrincessRTFM/StarboundInventoryUpdater</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/PrincessRTFM/StarboundInventoryUpdater.git</RepositoryUrl>
+		<RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
 		<Copyright>Copyleft Vixen 2022</Copyright>
+		<StartupObject>StarboundInventoryUpdater.Core</StartupObject>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -29,7 +30,6 @@
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 		<OutputPath>bin\$(Configuration)\</OutputPath>
-		<StartupObject>StarboundInventoryUpdater.Core</StartupObject>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
