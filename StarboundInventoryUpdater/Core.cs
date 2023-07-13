@@ -1,4 +1,4 @@
-namespace StarboundInventoryUpdater;
+namespace PrincessRTFM.StarboundInventoryUpdater;
 
 using System;
 using System.Collections.Generic;
@@ -90,9 +90,8 @@ internal class Core {
 					log($"# {exit}");
 					abort("Failed to parse player file.", EX_EXTERNAL + exit);
 				}
-				if (!File.Exists(jsonFile)) {
+				if (!File.Exists(jsonFile))
 					abort($"! {jsonFile}", EX_UNEXPECTEDFILE);
-				}
 
 				string json = jsonFix(File.ReadAllText(jsonFile), "inf", INF);
 				JsonNode root = JsonNode.Parse(json, null, new() {
