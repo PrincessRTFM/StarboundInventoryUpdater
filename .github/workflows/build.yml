@@ -16,7 +16,7 @@ on:
 
 env:
   SOLUTION_NAME: StarboundInventoryUpdater
-  SOLUTION_FILE: StarboundInventoryUpdater/StarboundInventoryUpdater.csproj
+  PROJECT_FILE: StarboundInventoryUpdater/StarboundInventoryUpdater.csproj
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
       matrix:
         configuration: [Debug, Release]
     runs-on: windows-2022
-    env:
+    env: # CANNOT use env.SOLUTION_NAME here, github doesn't recognise it :/
       OUTPUT_DIR: StarboundInventoryUpdater\bin\${{ matrix.configuration }}
     steps:
     - name: Checkout
@@ -40,11 +40,8 @@ jobs:
     # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore
-      run: dotnet restore -r win ${{ env.SOLUTION_NAME }}.sln
     - name: Build
-      run: dotnet build ${{ env.SOLUTION_NAME }}.sln --configuration ${{ matrix.configuration }} --no-restore
+      run: dotnet build ${{ env.SOLUTION_NAME }}.sln --configuration ${{ matrix.configuration }}
     - name: Zip output
       uses: thedoctor0/zip-release@main
       with:
@@ -93,7 +90,7 @@ jobs:
     - name: Extract version
       id: data
       run: |
-        buildVersion=$(grep -Ei '<version>[^<]+</version>' "${{ env.SOLUTION_FILE }}" | sed -e 's/.\+<version>\([^<]\+\)<.\+/\1/i' -)
+        buildVersion=$(grep -Ei '<version>[^<]+</version>' "${{ env.PROJECT_FILE }}" | sed -e 's/.\+<version>\([^<]\+\)<.\+/\1/i' -)
         echo "BUILD_VER=$buildVersion" >> $GITHUB_ENV
         echo "TAG_NAME=v$buildVersion" >> $GITHUB_ENV
       shell: bash
